@@ -13,7 +13,12 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
       
       - name: Install Supabase CLI
         run: npm install -g supabase
@@ -22,6 +27,7 @@ jobs:
         run: |
           supabase functions deploy server \
             --project-ref ${{ secrets.SUPABASE_PROJECT_REF }} \
-            --token ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+            --token ${{ secrets.SUPABASE_ACCESS_TOKEN }} \
+            --region us-east-1
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
