@@ -32,6 +32,17 @@ function getServiceClient() {
   return createClient(SUPABASE_URL, SERVICE_KEY);
 }
 
+function getUserClient(token: string) {
+  // Create a client authenticated with the user's token
+  return createClient(SUPABASE_URL, SERVICE_KEY, {
+    global: {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  });
+}
+
 async function getUser(c: any) {
   // User JWT travels in X-User-Token (safe from gateway rejection).
   // Fall back to stripping Authorization so existing callers still work.
@@ -46,13 +57,19 @@ async function getUser(c: any) {
     return null;
   }
   
-  const supabase = getServiceClient();
-  const { data: { user }, error } = await supabase.auth.getUser(token);
-  if (error) {
-    console.log("getUser error:", error.message, "with token:", token.substring(0, 20) + "...");
+  try {
+    // Try using a client configured with the user's token
+    const userClient = getUserClient(token);
+    const { data: { user }, error } = await userClient.auth.getUser(token);
+    if (error) {
+      console.log("getUser error with user client:", error.message);
+      return null;
+    }
+    return user;
+  } catch (e) {
+    console.log("getUser exception:", e);
     return null;
   }
-  return user;
 }
 
 async function getUserProfile(userId: string) {
