@@ -4,6 +4,9 @@ import { logger } from "npm:hono/logger";
 import { createClient } from "npm:@supabase/supabase-js";
 import * as kv from "./kv_store.tsx";
 import * as db from "./db.tsx";
+import { DEPLOYMENT_ID } from "./deployment.ts";
+
+console.log("Server deployed with:", DEPLOYMENT_ID);
 
 const app = new Hono();
 
