@@ -1341,6 +1341,17 @@ app.post("/make-server-991222a2/payment/paypal/capture/:paypalOrderId", async (c
 // Ensures the server always returns JSON — never plain-text "404 Not Found"
 // or "Internal Server Error" which would cause res.json() to throw a SyntaxError.
 
+// ─── DEBUG ────────────────────────────────────────────────────────────────────
+
+app.all("*", (c) => {
+  const method = c.req.method;
+  const pathname = new URL(c.req.url).pathname;
+  console.log(`[DEBUG] ${method} ${pathname}`);
+  
+  // Continue to next middleware
+  return undefined;
+});
+
 app.notFound((c) => {
   console.log("404 not found:", c.req.method, c.req.url);
   return c.json({ error: `Route not found: ${c.req.method} ${new URL(c.req.url).pathname}` }, 404);
