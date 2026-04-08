@@ -1,0 +1,14 @@
+{
+  "projects": {
+    "default": {
+      "db": {
+        "shadow_database_url": ""
+      }
+    }
+  },
+  "functions": {
+    "server": {
+      "entrypoint": "supabase/functions/server/index.tsx"
+    }
+  }
+}
