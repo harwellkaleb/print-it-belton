@@ -41,11 +41,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const fetchProfile = useCallback(async (token: string) => {
     try {
+      const headers = authHeaders(token);
+      console.log("fetchProfile: Sending request with token:", token.substring(0, 20) + "...");
+      console.log("fetchProfile: Headers:", { Authorization: headers.Authorization?.substring(0, 30) + "...", "X-User-Token": headers["X-User-Token"]?.substring(0, 20) + "..." });
+      
       const res = await fetch(apiUrl("/user/profile"), {
-        headers: authHeaders(token),
+        headers: headers,
       });
       const data = await res.json();
       if (res.ok) {
+        console.log("fetchProfile: Success! Profile:", data);
         setProfile(data);
       } else {
         console.error("Failed to fetch user profile:", data?.error || res.statusText);
