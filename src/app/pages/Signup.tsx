@@ -7,7 +7,7 @@ import { useAuth } from "../context/AuthContext";
 import { toast } from "sonner";
 
 export default function Signup() {
-  const { login } = useAuth();
+  const { login, refreshProfile } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const isManagerMode = searchParams.get("manager") === "true";
@@ -57,8 +57,11 @@ export default function Signup() {
       // Auto-login after signup
       await login(form.email, form.password);
       
-      // Wait a moment for profile to update before navigating
-      await new Promise(resolve => setTimeout(resolve, 500));
+      // Refresh profile to ensure we get the latest role from backend
+      await refreshProfile();
+      
+      // Wait a moment more for state to update
+      await new Promise(resolve => setTimeout(resolve, 300));
       
       toast.success(
         isManager ? "Manager account created!" : "Account created! Welcome!"
