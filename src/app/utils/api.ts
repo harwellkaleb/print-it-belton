@@ -21,20 +21,23 @@ export function apiUrl(route: string) {
  * Build request headers for authenticated API calls.
  *
  * The Supabase Edge Function gateway validates the Authorization header JWT
- * before forwarding the request to Hono. User JWTs can be rejected at the
- * gateway level (e.g. when slightly stale). To avoid this:
- *   - Authorization always carries the static anon key (always accepted by gateway)
- *   - The user JWT travels in X-User-Token where the server verifies it
- *     directly via the service-role client, bypassing gateway JWT validation.
+ * before forwarding the request to Hono. We send the user JWT in Authorization
+ * so the gateway accepts it, and also in X-User-Token as a backup.
  */
 export function authHeaders(token?: string | null): Record<string, string> {
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
-    Authorization: `Bearer ${publicAnonKey}`,
   };
+  
+  // Send user token in Authorization header for gateway validation
   if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
     headers["X-User-Token"] = token;
+  } else {
+    // Fallback to anon key if no user token
+    headers["Authorization"] = `Bearer ${publicAnonKey}`;
   }
+  
   return headers;
 }
 
