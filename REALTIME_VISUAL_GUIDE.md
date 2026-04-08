@@ -1,0 +1,281 @@
+# Real-time Access Code Updates - Visual Guide
+
+## User Experience
+
+### Scenario: Multiple Managers Viewing Settings
+
+```
+┌─────────────────────────────────┬─────────────────────────────────┐
+│ Manager A's Screen              │ Manager B's Screen              │
+├─────────────────────────────────┼─────────────────────────────────┤
+│                                 │                                 │
+│ Settings Page                   │ Settings Page                   │
+│ ┌───────────────────────────┐  │ ┌───────────────────────────┐  │
+│ │ 🔒 Manager Access Code    │  │ │ 🔒 Manager Access Code    │  │
+│ │                           │  │ │                           │  │
+│ │ ℹ️  Current code:          │  │ │ ℹ️  Current code:          │  │
+│ │    PRINTIT2024           │  │ │    PRINTIT2024           │  │
+│ │                           │  │ │                           │  │
+│ │ New Access Code:          │  │ │ New Access Code:          │  │
+│ │ [Enter new code...] [👁]  │  │ │ [____________] [👁]      │  │
+│ │                           │  │ │ (empty, no change)       │  │
+│ │ [Update Code]             │  │ │                           │  │
+│ └───────────────────────────┘  │ │                           │  │
+│                                 │ └───────────────────────────┘  │
+│                                 │                                 │
+│                                 │                                 │
+└─────────────────────────────────┴─────────────────────────────────┘
+
+Time: 1:00 PM
+Manager A types: "SUMMER2025"
+Manager A clicks: "Update Code"
+```
+
+---
+
+### Step 1: Manager A Submits New Code
+
+```
+┌─────────────────────────────────┬─────────────────────────────────┐
+│ Manager A's Screen              │ Manager B's Screen              │
+├─────────────────────────────────┼─────────────────────────────────┤
+│                                 │                                 │
+│ Settings Page                   │ Settings Page                   │
+│ ┌───────────────────────────┐  │ ┌───────────────────────────┐  │
+│ │ 🔒 Manager Access Code    │  │ │ 🔒 Manager Access Code    │  │
+│ │                           │  │ │                           │  │
+│ │ ✓ Saved!                 │  │ │ ℹ️  Current code:          │  │
+│ │ Updated Code: SUMMER2025  │  │ │    PRINTIT2024           │  │
+│ │ Last changed by: Alice    │  │ │                           │  │
+│ │ at Apr 8, 2025           │  │ │ New Access Code:          │  │
+│ │                           │  │ │ [____________] [👁]      │  │
+│ │ New Access Code:          │  │ │                           │  │
+│ │ [____________] [👁]       │  │ │ [Update Code]             │  │
+│ │ (cleared after save)      │  │ │                           │  │
+│ │ [Update Code]             │  │ │                           │  │
+│ └───────────────────────────┘  │ │                           │  │
+│                                 │ └───────────────────────────┘  │
+│                                 │                                 │
+│                                 │                                 │
+└─────────────────────────────────┴─────────────────────────────────┘
+
+Time: 1:00:02 PM
+[Backend processes save]
+[Database updated]
+[Realtime event triggered]
+```
+
+---
+
+### Step 2: Manager B Automatically Sees Update
+
+```
+┌─────────────────────────────────┬─────────────────────────────────┐
+│ Manager A's Screen              │ Manager B's Screen              │
+├─────────────────────────────────┼─────────────────────────────────┤
+│                                 │                                 │
+│ Settings Page                   │ Settings Page                   │
+│ ┌───────────────────────────┐  │ ┌───────────────────────────┐  │
+│ │ 🔒 Manager Access Code    │  │ │ 🔒 Manager Access Code    │  │
+│ │                           │  │ │ ┌─────────────────────────┐│  │
+│ │ ℹ️  Current code:          │  │ │ │ ⚡ Access code updated  ││  │
+│ │    SUMMER2025 ← UPDATED!  │  │ │ │    by Alice!            ││  │
+│ │                           │  │ │ │ New code: SUMMER2025    ││  │
+│ │ New Access Code:          │  │ │ │[auto-dismiss in 5s]     ││  │
+│ │ [____________] [👁]       │  │ │ └─────────────────────────┘│  │
+│ │                           │  │ │                           │  │
+│ │ [Update Code]             │  │ │ ℹ️  Current code:          │  │
+│ │                           │  │ │    SUMMER2025 ← UPDATED!  │  │
+│ │                           │  │ │                           │  │
+│ │ Last changed by: Alice    │  │ │ New Access Code:          │  │
+│ │ at Apr 8, 1:00 PM        │  │ │ [____________] [👁]       │  │
+│ └───────────────────────────┘  │ │                           │  │
+│                                 │ │ [Update Code]             │  │
+│                                 │ └───────────────────────────┘  │
+│                                 │                                 │
+└─────────────────────────────────┴─────────────────────────────────┘
+
+Time: 1:00:03 PM
+Manager B receives realtime update < 1 second after save!
+Blue notification shows: "Updated by Alice!"
+Manager B can see the new code: SUMMER2025
+```
+
+---
+
+### Step 3: Notification Auto-Dismisses
+
+```
+┌─────────────────────────────────┬─────────────────────────────────┐
+│ Manager A's Screen              │ Manager B's Screen              │
+├─────────────────────────────────┼─────────────────────────────────┤
+│                                 │                                 │
+│ Settings Page                   │ Settings Page                   │
+│ ┌───────────────────────────┐  │ ┌───────────────────────────┐  │
+│ │ 🔒 Manager Access Code    │  │ │ 🔒 Manager Access Code    │  │
+│ │                           │  │ │ ┌─────────────────────────┐│  │
+│ │ ℹ️  Current code:          │  │ │ │ ⚡ Access code updated  ││  │
+│ │    SUMMER2025            │  │ │ │    by Alice!            ││  │
+│ │                           │  │ │ │ New code: SUMMER2025    ││  │
+│ │ New Access Code:          │  │ │ │ [fading out...]         ││  │
+│ │ [____________] [👁]       │  │ │ └─────────────────────────┘│  │
+│ │                           │  │ │                           │  │
+│ │ [Update Code]             │  │ │ ℹ️  Current code:          │  │
+│ │                           │  │ │    SUMMER2025            │  │
+│ │                           │  │ │                           │  │
+│ │ Last changed by: Alice    │  │ │ New Access Code:          │  │
+│ │ at Apr 8, 1:00 PM        │  │ │ [____________] [👁]       │  │
+│ └───────────────────────────┘  │ │                           │  │
+│                                 │ │ [Update Code]             │  │
+│                                 │ │                           │  │
+│                                 │ │ Last changed by: Alice    │  │
+│                                 │ │ at Apr 8, 1:00 PM        │  │
+│                                 │ └───────────────────────────┘  │
+└─────────────────────────────────┴─────────────────────────────────┘
+
+Time: 1:00:08 PM
+Notification disappears after 5 seconds
+Code update is complete and visible to all managers
+```
+
+---
+
+## Key Features Shown
+
+### 1. **Instant Update** ⚡
+- Manager B doesn't need to refresh
+- Update appears in < 1 second
+- Blue realtime notification appears
+
+### 2. **Clear Attribution**
+- Shows who made the change: "by Alice"
+- Shows new code value
+- Shows timestamp
+
+### 3. **Non-intrusive**
+- Notification auto-dismisses
+- Doesn't block other interactions
+- Can continue using Settings page
+
+### 4. **Always Current**
+- Display always shows latest code
+- "Last changed by" shows who updated it
+- Timestamp shows when it was updated
+
+---
+
+## What's Different from Manual Refresh?
+
+### ❌ Without Realtime (Old Way)
+```
+Manager B sees code change:
+1. Manager A updates code
+2. Manager B has to manually refresh browser (F5)
+3. Page reloads
+4. New code appears
+
+Time: ~5-10 seconds + manual action
+```
+
+### ✅ With Realtime (New Way)
+```
+Manager B sees code change:
+1. Manager A updates code
+2. Update arrives automatically
+3. Blue notification appears
+4. Code displayed immediately
+
+Time: < 1 second + automatic!
+```
+
+---
+
+## How It Works Behind the Scenes
+
+```
+┌────────────────┐
+│  Manager A     │
+│  Click "Save"  │
+└────────┬───────┘
+         │
+         v
+┌────────────────┐
+│   Frontend     │
+│  Send PUT      │
+└────────┬───────┘
+         │
+         v
+┌────────────────────────────┐
+│  Supabase Edge Function    │
+│  /manager/settings/        │
+│  access-code               │
+└────────┬───────────────────┘
+         │
+         v
+┌────────────────────────────┐
+│  KV Store (Database)       │
+│  Update manager:access-code│
+└────────┬───────────────────┘
+         │
+         v
+┌────────────────────────────┐
+│  Supabase Realtime         │
+│  Detects change            │
+│  Broadcasts to all clients │
+└────────┬───────────────────┘
+         │
+         └────────────────────┬──────────────────────┐
+                              │                      │
+                              v                      v
+                    ┌──────────────────┐   ┌──────────────────┐
+                    │  Manager A       │   │  Manager B       │
+                    │  Updates state   │   │  Receives update │
+                    │  Notification OK │   │  Notification ⚡ │
+                    └──────────────────┘   └──────────────────┘
+```
+
+---
+
+## Testing the Feature
+
+### Setup
+1. Open the app in two browser windows
+2. Log in as different managers (or use incognito windows)
+3. Both navigate to Settings page
+
+### Test It
+1. In **Window A**: Update the access code to "TEST2025"
+2. Click "Update Code"
+3. Watch **Window B** automatically update:
+   - Blue notification appears
+   - Code changes to "TEST2025"
+   - Shows "Updated by [Manager Name]"
+
+### Expected Result
+- **Window B** updates within 1 second
+- No manual refresh needed
+- Notification shows who made the change
+
+---
+
+## Reliability
+
+| Scenario | Behavior |
+|----------|----------|
+| **Normal** | Update appears instantly |
+| **Slow Network** | Update within 1-5 seconds |
+| **Internet Drops** | Supabase reconnects automatically |
+| **Manager Goes Offline** | Misses realtime, sees latest on next load |
+| **Multiple Updates** | All updates reflected in real-time |
+
+---
+
+## Browser Compatibility
+
+Supabase Realtime works in:
+- ✅ Chrome/Edge (all versions)
+- ✅ Firefox (all versions)
+- ✅ Safari (all versions)
+- ✅ Mobile browsers
+- ✅ Any WebSocket-capable browser
+
