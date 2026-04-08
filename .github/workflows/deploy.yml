@@ -1,43 +1,13 @@
 name: Deploy to Supabase
+# DISABLED - Manual deployment via Supabase Dashboard instead
+# See: https://supabase.com/docs/guides/functions/deploy
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch: # Manual trigger only
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-      
-      - name: Install Supabase CLI
-        run: |
-          npm install -g @supabase/cli
-          supabase --version
-      
-      - name: Verify secrets
-        run: |
-          if [ -z "${{ secrets.SUPABASE_PROJECT_REF }}" ]; then
-            echo "ERROR: SUPABASE_PROJECT_REF secret is not set"
-            exit 1
-          fi
-          if [ -z "${{ secrets.SUPABASE_ACCESS_TOKEN }}" ]; then
-            echo "ERROR: SUPABASE_ACCESS_TOKEN secret is not set"
-            exit 1
-          fi
-          echo "✓ All required secrets are set"
-      
-      - name: Deploy Edge Functions
-        env:
-          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-        run: |
-          echo "Deploying to project: ${{ secrets.SUPABASE_PROJECT_REF }}"
-          supabase functions deploy server \
-            --project-ref ${{ secrets.SUPABASE_PROJECT_REF }} \
-            --verbose
+      - run: echo "Workflow disabled - use Supabase Dashboard for deployment"
