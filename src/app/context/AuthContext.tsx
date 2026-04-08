@@ -44,12 +44,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const res = await fetch(apiUrl("/user/profile"), {
         headers: authHeaders(token),
       });
+      const data = await res.json();
       if (res.ok) {
-        const data = await res.json();
         setProfile(data);
+      } else {
+        console.error("Failed to fetch user profile:", data?.error || res.statusText);
+        throw new Error(data?.error || `Profile fetch failed: ${res.status}`);
       }
     } catch (e) {
       console.error("Failed to fetch user profile:", e);
+      throw e;
     }
   }, []);
 
@@ -75,7 +79,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       async (_event, session) => {
         setSession(session);
         if (session?.access_token) {
-          await fetchProfile(session.access_token);
+          try {
+            await fetchProfile(session.access_token);
+          } catch (e) {
+            console.error("Profile fetch failed on auth change:", e);
+            // Don't clear session on fetch error, just log it
+          }
         } else {
           setProfile(null);
         }
@@ -91,6 +100,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
     if (error) throw new Error(error.message);
     if (data.session?.access_token) {
+      setSession(data.session);
       await fetchProfile(data.session.access_token);
     }
   };
