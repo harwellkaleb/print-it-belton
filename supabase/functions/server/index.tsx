@@ -12,7 +12,7 @@ const app = new Hono();
 
 app.use("*", logger(console.log));
 app.use(
-  "/*",
+  "/make-server-991222a2/*",
   cors({
     origin: "*",
     allowHeaders: ["Content-Type", "Authorization", "X-User-Token"],
@@ -97,11 +97,11 @@ async function resolveProduct(product: any) {
 // ─── HEALTH ──────────────────────────────────────────────────────────────────
 // Deployment: 2026-04-08 - Manager access code routes enabled via GitHub Actions
 
-app.get("/health", (c) => c.json({ status: "ok" }));
+app.get("/make-server-991222a2/health", (c) => c.json({ status: "ok" }));
 
 // ─── AUTH ────────────────────────────────────────────────────────────────────
 
-app.post("/auth/signup", async (c) => {
+app.post("/make-server-991222a2/auth/signup", async (c) => {
   try {
     const body = await c.req.json();
     const { email, password, name } = body;
@@ -148,7 +148,7 @@ app.post("/auth/signup", async (c) => {
   }
 });
 
-app.post("/auth/manager-signup", async (c) => {
+app.post("/make-server-991222a2/auth/manager-signup", async (c) => {
   try {
     const body = await c.req.json();
     const { email, password, name, managerCode } = body;
@@ -196,7 +196,7 @@ app.post("/auth/manager-signup", async (c) => {
 
 // ─── USER PROFILE ─────────────────────────────────────────────────────────────
 
-app.get("/user/profile", async (c) => {
+app.get("/make-server-991222a2/user/profile", async (c) => {
   const user = await getUser(c);
   if (!user) return c.json({ error: "Unauthorized" }, 401);
 
@@ -215,7 +215,7 @@ app.get("/user/profile", async (c) => {
   return c.json(profile);
 });
 
-app.put("/user/profile", async (c) => {
+app.put("/make-server-991222a2/user/profile", async (c) => {
   const user = await getUser(c);
   if (!user) return c.json({ error: "Unauthorized" }, 401);
 
@@ -233,7 +233,7 @@ app.put("/user/profile", async (c) => {
 
 // ─── PRODUCTS ─────────────────────────────────────────────────────────────────
 
-app.get("/products", async (c) => {
+app.get("/make-server-991222a2/products", async (c) => {
   try {
     const products = await db.getByPrefix("product:");
     const resolved = await Promise.all((products || []).map(resolveProduct));
@@ -244,7 +244,7 @@ app.get("/products", async (c) => {
   }
 });
 
-app.get("/products/category/:category", async (c) => {
+app.get("/make-server-991222a2/products/category/:category", async (c) => {
   try {
     const category = c.req.param("category");
     const products = await db.getByPrefix("product:");
@@ -258,7 +258,7 @@ app.get("/products/category/:category", async (c) => {
   }
 });
 
-app.get("/products/:id", async (c) => {
+app.get("/make-server-991222a2/products/:id", async (c) => {
   try {
     const id = c.req.param("id");
     const product = await db.get(`product:${id}`);
@@ -269,7 +269,7 @@ app.get("/products/:id", async (c) => {
   }
 });
 
-app.post("/products", async (c) => {
+app.post("/make-server-991222a2/products", async (c) => {
   if (!(await isManager(c)))
     return c.json({ error: "Unauthorized - manager access required" }, 403);
   try {
@@ -288,7 +288,7 @@ app.post("/products", async (c) => {
   }
 });
 
-app.put("/products/:id", async (c) => {
+app.put("/make-server-991222a2/products/:id", async (c) => {
   if (!(await isManager(c)))
     return c.json({ error: "Unauthorized - manager access required" }, 403);
   try {
@@ -304,7 +304,7 @@ app.put("/products/:id", async (c) => {
   }
 });
 
-app.delete("/products/:id", async (c) => {
+app.delete("/make-server-991222a2/products/:id", async (c) => {
   if (!(await isManager(c)))
     return c.json({ error: "Unauthorized - manager access required" }, 403);
   try {
@@ -318,7 +318,7 @@ app.delete("/products/:id", async (c) => {
 
 // ─── IMAGE UPLOAD ─────────────────────────────────────────────────────────────
 
-app.post("/upload-image", async (c) => {
+app.post("/make-server-991222a2/upload-image", async (c) => {
   if (!(await isManager(c)))
     return c.json({ error: "Unauthorized - manager access required" }, 403);
   try {
@@ -350,7 +350,7 @@ app.post("/upload-image", async (c) => {
 
 // ─── ORDERS ──────────────────────────────────────────────────────────────────
 
-app.post("/orders", async (c) => {
+app.post("/make-server-991222a2/orders", async (c) => {
   const user = await getUser(c);
   if (!user) return c.json({ error: "Unauthorized" }, 401);
   try {
@@ -383,7 +383,7 @@ app.post("/orders", async (c) => {
   }
 });
 
-app.get("/orders/my", async (c) => {
+app.get("/make-server-991222a2/orders/my", async (c) => {
   const user = await getUser(c);
   if (!user) return c.json({ error: "Unauthorized" }, 401);
   try {
@@ -402,7 +402,7 @@ app.get("/orders/my", async (c) => {
   }
 });
 
-app.get("/orders", async (c) => {
+app.get("/make-server-991222a2/orders", async (c) => {
   const user = await getUser(c);
   if (!user) return c.json({ error: "Unauthorized" }, 401);
   if (!(await isManagerUser(user)))
@@ -420,7 +420,7 @@ app.get("/orders", async (c) => {
   }
 });
 
-app.put("/orders/:id/status", async (c) => {
+app.put("/make-server-991222a2/orders/:id/status", async (c) => {
   const user = await getUser(c);
   if (!user) return c.json({ error: "Unauthorized" }, 401);
   if (!(await isManagerUser(user)))
@@ -446,7 +446,7 @@ app.put("/orders/:id/status", async (c) => {
   }
 });
 
-app.delete("/orders/:id", async (c) => {
+app.delete("/make-server-991222a2/orders/:id", async (c) => {
   const user = await getUser(c);
   if (!user) return c.json({ error: "Unauthorized" }, 401);
   try {
@@ -729,7 +729,7 @@ async function sendOrderConfirmationToCustomer(order: any) {
 
 // ─── EMAIL PROVIDER SETTINGS (store-wide) ─────────────────────────────────────
 
-app.get("/manager/settings/email-provider", async (c) => {
+app.get("/make-server-991222a2/manager/settings/email-provider", async (c) => {
   const user = await getUser(c);
   if (!user) return c.json({ error: "Unauthorized" }, 401);
   if (!(await isManagerUser(user))) return c.json({ error: "Manager access required" }, 403);
@@ -759,7 +759,7 @@ app.get("/manager/settings/email-provider", async (c) => {
   });
 });
 
-app.put("/manager/settings/email-provider", async (c) => {
+app.put("/make-server-991222a2/manager/settings/email-provider", async (c) => {
   const user = await getUser(c);
   if (!user) return c.json({ error: "Unauthorized" }, 401);
   if (!(await isManagerUser(user))) return c.json({ error: "Manager access required" }, 403);
@@ -801,7 +801,7 @@ app.put("/manager/settings/email-provider", async (c) => {
   }
 });
 
-app.delete("/manager/settings/email-provider/key", async (c) => {
+app.delete("/make-server-991222a2/manager/settings/email-provider/key", async (c) => {
   const user = await getUser(c);
   if (!user) return c.json({ error: "Unauthorized" }, 401);
   if (!(await isManagerUser(user))) return c.json({ error: "Manager access required" }, 403);
@@ -822,7 +822,7 @@ app.delete("/manager/settings/email-provider/key", async (c) => {
   }
 });
 
-app.post("/manager/settings/test-email", async (c) => {
+app.post("/make-server-991222a2/manager/settings/test-email", async (c) => {
   const user = await getUser(c);
   if (!user) return c.json({ error: "Unauthorized" }, 401);
   if (!(await isManagerUser(user))) return c.json({ error: "Manager access required" }, 403);
@@ -890,7 +890,7 @@ app.post("/manager/settings/test-email", async (c) => {
 
 // ─── NOTIFICATION PREFERENCES (per-manager) ───────────────────────────────────
 
-app.get("/manager/notification-prefs", async (c) => {
+app.get("/make-server-991222a2/manager/notification-prefs", async (c) => {
   const user = await getUser(c);
   if (!user) return c.json({ error: "Unauthorized" }, 401);
   if (!(await isManagerUser(user)))
@@ -900,7 +900,7 @@ app.get("/manager/notification-prefs", async (c) => {
   return c.json(prefs ?? { pendingOrders: false, email: user.email });
 });
 
-app.put("/manager/notification-prefs", async (c) => {
+app.put("/make-server-991222a2/manager/notification-prefs", async (c) => {
   const user = await getUser(c);
   if (!user) return c.json({ error: "Unauthorized" }, 401);
   if (!(await isManagerUser(user)))
@@ -926,7 +926,7 @@ app.put("/manager/notification-prefs", async (c) => {
 // Allows an existing auth user to re-apply for manager role by providing the
 // correct access code.  Safe to call multiple times (idempotent).
 
-app.post("/auth/make-manager", async (c) => {
+app.post("/make-server-991222a2/auth/make-manager", async (c) => {
   try {
     const { userToken, managerCode } = await c.req.json();
 
@@ -971,7 +971,7 @@ app.post("/auth/make-manager", async (c) => {
 // Get and update the manager access code (only callable by managers)
 // Deployed: 2026-04-08 20:20 - Access code routes enabled
 
-app.get("/manager/settings/access-code", async (c) => {
+app.get("/make-server-991222a2/manager/settings/access-code", async (c) => {
   try {
     const user = await getUser(c);
     if (!user) return c.json({ error: "Unauthorized" }, 401);
@@ -997,7 +997,7 @@ app.get("/manager/settings/access-code", async (c) => {
   }
 });
 
-app.put("/manager/settings/access-code", async (c) => {
+app.put("/make-server-991222a2/manager/settings/access-code", async (c) => {
   try {
     const user = await getUser(c);
     if (!user) return c.json({ error: "Unauthorized" }, 401);
@@ -1044,7 +1044,7 @@ app.put("/manager/settings/access-code", async (c) => {
 
 // ─── SEED DATA ────────────────────────────────────────────────────────────────
 
-app.post("/seed", async (c) => {
+app.post("/make-server-991222a2/seed", async (c) => {
   try {
     const existing = await db.getByPrefix("product:");
     if (existing && existing.length > 0)
@@ -1176,7 +1176,7 @@ app.post("/seed", async (c) => {
 // ─── PUBLIC ORDER TRACKING ────────────────────────────────────────────────────
 // No auth required — order UUID acts as an unguessable secret link.
 
-app.get("/track/:id", async (c) => {
+app.get("/make-server-991222a2/track/:id", async (c) => {
   try {
     const id = c.req.param("id");
     const order = await db.get(`order:${id}`);
@@ -1220,7 +1220,7 @@ async function getPayPalAccessToken(clientId: string, clientSecret: string, sand
   } catch (e) { console.log("getPayPalAccessToken error:", e); return null; }
 }
 
-app.get("/manager/settings/payment", async (c) => {
+app.get("/make-server-991222a2/manager/settings/payment", async (c) => {
   const user = await getUser(c);
   if (!user) return c.json({ error: "Unauthorized" }, 401);
   if (!(await isManagerUser(user))) return c.json({ error: "Manager access required" }, 403);
@@ -1235,7 +1235,7 @@ app.get("/manager/settings/payment", async (c) => {
   });
 });
 
-app.put("/manager/settings/payment", async (c) => {
+app.put("/make-server-991222a2/manager/settings/payment", async (c) => {
   const user = await getUser(c);
   if (!user) return c.json({ error: "Unauthorized" }, 401);
   if (!(await isManagerUser(user))) return c.json({ error: "Manager access required" }, 403);
@@ -1270,7 +1270,7 @@ app.put("/manager/settings/payment", async (c) => {
   }
 });
 
-app.get("/payment/config", async (c) => {
+app.get("/make-server-991222a2/payment/config", async (c) => {
   try {
     const cfg = await db.get("settings:paymentgateway") ?? {};
     return c.json({
@@ -1282,7 +1282,7 @@ app.get("/payment/config", async (c) => {
   } catch (e) { return c.json({ error: `Failed to load payment config: ${e}` }, 500); }
 });
 
-app.post("/payment/stripe/create-intent", async (c) => {
+app.post("/make-server-991222a2/payment/stripe/create-intent", async (c) => {
   const user = await getUser(c);
   if (!user) return c.json({ error: "Unauthorized" }, 401);
   try {
@@ -1299,7 +1299,7 @@ app.post("/payment/stripe/create-intent", async (c) => {
   } catch (e) { console.log("Stripe create-intent error:", e); return c.json({ error: `Failed to create payment intent: ${e}` }, 500); }
 });
 
-app.post("/payment/paypal/create-order", async (c) => {
+app.post("/make-server-991222a2/payment/paypal/create-order", async (c) => {
   const user = await getUser(c);
   if (!user) return c.json({ error: "Unauthorized" }, 401);
   try {
@@ -1318,7 +1318,7 @@ app.post("/payment/paypal/create-order", async (c) => {
   } catch (e) { console.log("PayPal create-order error:", e); return c.json({ error: `Failed to create PayPal order: ${e}` }, 500); }
 });
 
-app.post("/payment/paypal/capture/:paypalOrderId", async (c) => {
+app.post("/make-server-991222a2/payment/paypal/capture/:paypalOrderId", async (c) => {
   const user = await getUser(c);
   if (!user) return c.json({ error: "Unauthorized" }, 401);
   try {
