@@ -966,6 +966,7 @@ app.post("/make-server-991222a2/auth/make-manager", async (c) => {
 
 // ─── MANAGER ACCESS CODE ──────────────────────────────────────────────────────
 // Get and update the manager access code (only callable by managers)
+// Deployed: 2026-04-08 20:20 - Access code routes enabled
 
 app.get("/make-server-991222a2/manager/settings/access-code", async (c) => {
   try {
