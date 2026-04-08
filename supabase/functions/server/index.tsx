@@ -35,14 +35,21 @@ function getServiceClient() {
 async function getUser(c: any) {
   // User JWT travels in X-User-Token (safe from gateway rejection).
   // Fall back to stripping Authorization so existing callers still work.
-  const token =
-    c.req.header("X-User-Token") ||
-    (c.req.header("Authorization") ?? "").replace(/^Bearer\s+/i, "");
-  if (!token || token === "") return null;
+  const xUserToken = c.req.header("X-User-Token");
+  const authHeader = c.req.header("Authorization") ?? "";
+  const authToken = authHeader.replace(/^Bearer\s+/i, "");
+  
+  const token = xUserToken || authToken;
+  
+  if (!token || token === "") {
+    console.log("getUser: No token found. X-User-Token:", xUserToken ? "present" : "missing", "Authorization:", authHeader ? "present" : "missing");
+    return null;
+  }
+  
   const supabase = getServiceClient();
   const { data: { user }, error } = await supabase.auth.getUser(token);
   if (error) {
-    console.log("getUser error:", error.message);
+    console.log("getUser error:", error.message, "with token:", token.substring(0, 20) + "...");
     return null;
   }
   return user;
