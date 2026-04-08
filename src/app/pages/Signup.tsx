@@ -56,6 +56,10 @@ export default function Signup() {
 
       // Auto-login after signup
       await login(form.email, form.password);
+      
+      // Wait a moment for profile to update before navigating
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
       toast.success(
         isManager ? "Manager account created!" : "Account created! Welcome!"
       );
