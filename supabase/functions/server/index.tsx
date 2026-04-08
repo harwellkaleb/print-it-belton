@@ -92,6 +92,7 @@ async function resolveProduct(product: any) {
 })();
 
 // ─── HEALTH ──────────────────────────────────────────────────────────────────
+// Deployment: 2026-04-08 - Manager access code routes enabled
 
 app.get("/make-server-991222a2/health", (c) => c.json({ status: "ok" }));
 
