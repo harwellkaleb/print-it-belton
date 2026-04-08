@@ -1,17 +1,16 @@
 import { projectId, publicAnonKey } from "/utils/supabase/info";
 
-export const API_BASE = `https://${projectId}.supabase.co/functions/v1/make-server-991222a2`;
+export const API_BASE = `https://${projectId}.supabase.co/functions/v1/server`;
 
 /**
  * Build a full server URL.
  *
- * Supabase strips only "/functions/v1" from req.url before handing it to Deno,
- * leaving the function name ("make-server-991222a2") as the first path segment.
- * Hono routes are already prefixed with /make-server-991222a2, so the URL must
- * be: <API_BASE>/<route>  where route = "/make-server-991222a2/..."
+ * Supabase strips "/functions/v1" from req.url before handing it to Deno,
+ * leaving just the route path. The Edge Function is named "server" (from supabase.json),
+ * so requests to /functions/v1/server/auth/signup become /auth/signup in Hono.
  *
- * Path Hono sees after Supabase strips /functions/v1:
- *   /make-server-991222a2/auth/signup  ✓  matches app.post("/make-server-991222a2/auth/signup")
+ * Path Hono sees after Supabase strips /functions/v1/server:
+ *   /auth/signup  ✓  matches app.post("/auth/signup")
  */
 export function apiUrl(route: string) {
   return `${API_BASE}${route}`;
