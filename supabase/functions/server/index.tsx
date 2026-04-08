@@ -152,7 +152,12 @@ app.post("/make-server-991222a2/auth/manager-signup", async (c) => {
   try {
     const body = await c.req.json();
     const { email, password, name, managerCode } = body;
-    if ((managerCode ?? "").trim().toUpperCase() !== "PRINTIT2024")
+    
+    // Fetch the current access code from KV store (default: PRINTIT2024)
+    const codeConfig = await db.get("manager:access-code");
+    const currentCode = (codeConfig?.code ?? "PRINTIT2024").trim().toUpperCase();
+    
+    if ((managerCode ?? "").trim().toUpperCase() !== currentCode)
       return c.json({ error: "Invalid manager access code" }, 403);
 
     const supabase = getServiceClient();
