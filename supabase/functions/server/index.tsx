@@ -32,17 +32,6 @@ function getServiceClient() {
   return createClient(SUPABASE_URL, SERVICE_KEY);
 }
 
-function getUserClient(token: string) {
-  // Create a client authenticated with the user's token
-  return createClient(SUPABASE_URL, SERVICE_KEY, {
-    global: {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    },
-  });
-}
-
 async function getUser(c: any) {
   // User JWT travels in X-User-Token (safe from gateway rejection).
   // Fall back to stripping Authorization so existing callers still work.
@@ -58,16 +47,34 @@ async function getUser(c: any) {
   }
   
   try {
-    // Try using a client configured with the user's token
-    const userClient = getUserClient(token);
-    const { data: { user }, error } = await userClient.auth.getUser(token);
-    if (error) {
-      console.log("getUser error with user client:", error.message);
+    // Decode JWT manually by splitting and parsing the payload
+    // JWT format: header.payload.signature
+    const parts = token.split(".");
+    if (parts.length !== 3) {
+      console.log("getUser: Invalid token format (expected 3 parts, got", parts.length + ")");
       return null;
     }
-    return user;
+    
+    // Decode the payload (second part)
+    const payload = parts[1];
+    // Add padding if necessary for base64 decoding
+    const padded = payload + "=".repeat((4 - payload.length % 4) % 4);
+    // Use atob to decode base64
+    const decodedStr = atob(padded);
+    const decoded = JSON.parse(decodedStr);
+    
+    console.log("getUser: Decoded JWT - sub:", decoded.sub, "email:", decoded.email);
+    
+    // Return a user object with the extracted data
+    return {
+      id: decoded.sub,
+      email: decoded.email,
+      user_metadata: {
+        name: decoded.name,
+      },
+    };
   } catch (e) {
-    console.log("getUser exception:", e);
+    console.log("getUser: Failed to decode JWT:", e);
     return null;
   }
 }
