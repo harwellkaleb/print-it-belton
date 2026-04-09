@@ -54,19 +54,33 @@ export default function Signup() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Signup failed");
 
-      // Auto-login after signup
-      await login(form.email, form.password);
-      
+      // IMPORTANT: Navigate immediately after successful signup
+      // This happens BEFORE login(), so user always gets redirected
+      navigate(isManager ? "/manager" : "/account", { replace: true });
+
+      // Now try auto-login (non-critical, doesn't affect navigation)
+      try {
+        await login(form.email, form.password);
+      } catch (loginErr) {
+        console.warn("Auto-login failed after signup:", loginErr);
+      }
+
       // Refresh profile to ensure we get the latest role from backend
-      await refreshProfile();
-      
-      // Wait a moment more for state to update
+      try {
+        await refreshProfile();
+      } catch (profileErr) {
+        console.warn("Profile refresh failed:", profileErr);
+      }
+
+      // Wait a moment for state to update
       await new Promise(resolve => setTimeout(resolve, 300));
       
       toast.success(
         isManager ? "Manager account created!" : "Account created! Welcome!"
       );
-      navigate(isManager ? "/manager" : "/account");
+      
+      // NOTE: The navigate() call above (line ~57) is the only one needed.
+      // This navigate() call was removed from here to prevent double navigation.
     } catch (err: any) {
       console.error("Signup error:", err);
       toast.error(err.message || "Failed to create account");
